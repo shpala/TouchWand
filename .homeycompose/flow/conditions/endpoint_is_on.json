@@ -1,0 +1,26 @@
+{
+  "id": "endpoint_is_on",
+  "title": {
+    "en": "Endpoint is on"
+  },
+  "titleFormatted": {
+    "en": "[[endpoint]] is !{{on|off}}"
+  },
+  "hint": {
+    "en": "Check if a specific endpoint is on or off."
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=wallwand"
+    },
+    {
+      "name": "endpoint",
+      "type": "autocomplete",
+      "title": {
+        "en": "Endpoint"
+      }
+    }
+  ]
+}

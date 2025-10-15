@@ -1,0 +1,746 @@
+{
+  "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
+  "id": "com.shpala.TouchWand",
+  "name": {
+    "en": "TouchWand"
+  },
+  "description": {
+    "en": "Up to 6 Relays and multiple options to automate your home."
+  },
+  "category": [
+    "tools"
+  ],
+  "version": "0.1.0",
+  "compatibility": ">=5.0.0",
+  "sdk": 3,
+  "platforms": [
+    "local"
+  ],
+  "author": "Pavel Ferencz",
+  "homeyCommunityTopicId": 144154,
+  "brandColor": "#ecb100",
+  "images": {
+    "large": "/assets/icon_large.png",
+    "small": "/assets/icon_small.png",
+    "xlarge": "/assets/icon_xlarge.png"
+  },
+  "flow": {
+    "triggers": [
+      {
+        "id": "endpoint_dim_changed",
+        "title": {
+          "en": "Endpoint dimmer changed"
+        },
+        "hint": {
+          "en": "Triggered when a dimmer endpoint's brightness changes"
+        },
+        "args": [
+          {
+            "type": "autocomplete",
+            "name": "endpoint",
+            "title": {
+              "en": "Endpoint"
+            },
+            "placeholder": {
+              "en": "Select endpoint"
+            }
+          }
+        ],
+        "tokens": [
+          {
+            "name": "endpoint_id",
+            "type": "number",
+            "title": {
+              "en": "Endpoint ID"
+            },
+            "example": 1
+          },
+          {
+            "name": "endpoint_label",
+            "type": "string",
+            "title": {
+              "en": "Endpoint Label"
+            },
+            "example": "Living Room Light"
+          },
+          {
+            "name": "dim_value",
+            "type": "number",
+            "title": {
+              "en": "Brightness"
+            },
+            "example": 0.5
+          }
+        ]
+      },
+      {
+        "id": "endpoint_state_changed",
+        "title": {
+          "en": "Endpoint state changed"
+        },
+        "titleFormatted": {
+          "en": "[[endpoint]] state changed"
+        },
+        "hint": {
+          "en": "Triggered when an endpoint changes state (on/off)"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=wallwand"
+          },
+          {
+            "name": "endpoint",
+            "type": "autocomplete",
+            "title": {
+              "en": "Endpoint"
+            }
+          }
+        ],
+        "tokens": [
+          {
+            "name": "endpoint_id",
+            "type": "number",
+            "title": {
+              "en": "Endpoint ID"
+            },
+            "example": 1
+          },
+          {
+            "name": "endpoint_label",
+            "type": "string",
+            "title": {
+              "en": "Endpoint Label"
+            },
+            "example": "Living Room Light"
+          },
+          {
+            "name": "state",
+            "type": "boolean",
+            "title": {
+              "en": "State"
+            },
+            "example": true
+          }
+        ]
+      },
+      {
+        "id": "endpoint_turned_off",
+        "title": {
+          "en": "Endpoint turned off"
+        },
+        "hint": {
+          "en": "Triggered when a specific endpoint is turned off"
+        },
+        "args": [
+          {
+            "type": "autocomplete",
+            "name": "endpoint",
+            "title": {
+              "en": "Endpoint"
+            },
+            "placeholder": {
+              "en": "Select endpoint"
+            }
+          }
+        ],
+        "tokens": [
+          {
+            "name": "endpoint_id",
+            "type": "number",
+            "title": {
+              "en": "Endpoint ID"
+            },
+            "example": 1
+          },
+          {
+            "name": "endpoint_label",
+            "type": "string",
+            "title": {
+              "en": "Endpoint Label"
+            },
+            "example": "Living Room Light"
+          }
+        ]
+      },
+      {
+        "id": "endpoint_turned_on",
+        "title": {
+          "en": "Endpoint turned on"
+        },
+        "hint": {
+          "en": "Triggered when a specific endpoint is turned on"
+        },
+        "args": [
+          {
+            "type": "autocomplete",
+            "name": "endpoint",
+            "title": {
+              "en": "Endpoint"
+            },
+            "placeholder": {
+              "en": "Select endpoint"
+            }
+          }
+        ],
+        "tokens": [
+          {
+            "name": "endpoint_id",
+            "type": "number",
+            "title": {
+              "en": "Endpoint ID"
+            },
+            "example": 1
+          },
+          {
+            "name": "endpoint_label",
+            "type": "string",
+            "title": {
+              "en": "Endpoint Label"
+            },
+            "example": "Living Room Light"
+          }
+        ]
+      }
+    ],
+    "conditions": [
+      {
+        "id": "endpoint_dim_compare",
+        "title": {
+          "en": "Dimmer level is..."
+        },
+        "titleFormatted": {
+          "en": "[[endpoint]] brightness is [[comparison]] [[level]]"
+        },
+        "hint": {
+          "en": "Check if a dimmer endpoint's brightness matches a condition."
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=wallwand"
+          },
+          {
+            "name": "endpoint",
+            "type": "autocomplete",
+            "title": {
+              "en": "Endpoint (Dimmer)"
+            }
+          },
+          {
+            "name": "comparison",
+            "type": "dropdown",
+            "title": {
+              "en": "Comparison"
+            },
+            "values": [
+              {
+                "id": "greater_than",
+                "label": {
+                  "en": "greater than"
+                }
+              },
+              {
+                "id": "less_than",
+                "label": {
+                  "en": "less than"
+                }
+              },
+              {
+                "id": "equal_to",
+                "label": {
+                  "en": "equal to"
+                }
+              }
+            ]
+          },
+          {
+            "name": "level",
+            "type": "number",
+            "title": {
+              "en": "Level"
+            },
+            "min": 0,
+            "max": 1,
+            "step": 0.01
+          }
+        ]
+      },
+      {
+        "id": "endpoint_is_on",
+        "title": {
+          "en": "Endpoint is on"
+        },
+        "titleFormatted": {
+          "en": "[[endpoint]] is !{{on|off}}"
+        },
+        "hint": {
+          "en": "Check if a specific endpoint is on or off."
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=wallwand"
+          },
+          {
+            "name": "endpoint",
+            "type": "autocomplete",
+            "title": {
+              "en": "Endpoint"
+            }
+          }
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "id": "set_endpoint_dim",
+        "title": {
+          "en": "Set endpoint brightness"
+        },
+        "titleFormatted": {
+          "en": "Set [[endpoint]] brightness to [[level]]"
+        },
+        "hint": {
+          "en": "Set the brightness level for a WallWand dimmer endpoint."
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=wallwand"
+          },
+          {
+            "name": "endpoint",
+            "type": "autocomplete",
+            "title": {
+              "en": "Endpoint (Dimmer)"
+            },
+            "placeholder": {
+              "en": "Select dimmer endpoint"
+            }
+          },
+          {
+            "name": "level",
+            "type": "range",
+            "min": 0,
+            "max": 1,
+            "step": 0.01,
+            "label": "%",
+            "labelMultiplier": 100,
+            "labelDecimals": 0,
+            "title": {
+              "en": "Brightness"
+            }
+          }
+        ]
+      },
+      {
+        "id": "toggle_endpoint",
+        "title": {
+          "en": "Toggle endpoint"
+        },
+        "titleFormatted": {
+          "en": "Toggle [[endpoint]]"
+        },
+        "hint": {
+          "en": "Toggle a specific WallWand endpoint between ON and OFF."
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=wallwand"
+          },
+          {
+            "name": "endpoint",
+            "type": "autocomplete",
+            "title": {
+              "en": "Endpoint"
+            },
+            "placeholder": {
+              "en": "Select endpoint"
+            }
+          }
+        ]
+      },
+      {
+        "id": "turn_endpoint_off",
+        "title": {
+          "en": "Turn endpoint OFF"
+        },
+        "titleFormatted": {
+          "en": "Turn [[endpoint]] OFF"
+        },
+        "hint": {
+          "en": "Turn off a specific WallWand endpoint (switch or dimmer)."
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=wallwand"
+          },
+          {
+            "name": "endpoint",
+            "type": "autocomplete",
+            "title": {
+              "en": "Endpoint"
+            },
+            "placeholder": {
+              "en": "Select endpoint"
+            }
+          }
+        ]
+      },
+      {
+        "id": "turn_endpoint_on",
+        "title": {
+          "en": "Turn endpoint ON"
+        },
+        "titleFormatted": {
+          "en": "Turn [[endpoint]] ON"
+        },
+        "hint": {
+          "en": "Turn on a specific WallWand endpoint (switch or dimmer)."
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=wallwand"
+          },
+          {
+            "name": "endpoint",
+            "type": "autocomplete",
+            "title": {
+              "en": "Endpoint"
+            },
+            "placeholder": {
+              "en": "Select endpoint"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "drivers": [
+    {
+      "id": "wallwand",
+      "name": {
+        "en": "WallWand"
+      },
+      "class": "other",
+      "images": {
+        "xlarge": "drivers/wallwand/assets/icon_xlarge.png",
+        "large": "drivers/wallwand/assets/icon_large.png",
+        "small": "drivers/wallwand/assets/icon_small.png"
+      },
+      "capabilities": [
+        "onoff.ep1",
+        "dim.ep1",
+        "onoff.ep2",
+        "dim.ep2",
+        "onoff.ep3",
+        "dim.ep3",
+        "onoff.ep4",
+        "dim.ep4",
+        "onoff.ep5",
+        "dim.ep5",
+        "onoff.ep6",
+        "dim.ep6"
+      ],
+      "capabilitiesOptions": {
+        "onoff.ep1": {
+          "title": {
+            "en": "Switch 1"
+          }
+        },
+        "dim.ep1": {
+          "title": {
+            "en": "Dimmer 1"
+          }
+        },
+        "onoff.ep2": {
+          "title": {
+            "en": "Switch 2"
+          }
+        },
+        "dim.ep2": {
+          "title": {
+            "en": "Dimmer 2"
+          }
+        },
+        "onoff.ep3": {
+          "title": {
+            "en": "Switch 3"
+          }
+        },
+        "dim.ep3": {
+          "title": {
+            "en": "Dimmer 3"
+          }
+        },
+        "onoff.ep4": {
+          "title": {
+            "en": "Switch 4"
+          }
+        },
+        "dim.ep4": {
+          "title": {
+            "en": "Dimmer 4"
+          }
+        },
+        "onoff.ep5": {
+          "title": {
+            "en": "Switch 5"
+          }
+        },
+        "dim.ep5": {
+          "title": {
+            "en": "Dimmer 5"
+          }
+        },
+        "onoff.ep6": {
+          "title": {
+            "en": "Switch 6"
+          }
+        },
+        "dim.ep6": {
+          "title": {
+            "en": "Dimmer 6"
+          }
+        }
+      },
+      "settings": [
+        {
+          "id": "label_ep1",
+          "type": "text",
+          "label": {
+            "en": "Endpoint 1 Label"
+          },
+          "value": "",
+          "hint": {
+            "en": "Custom name for the switch/dimmer on endpoint 1."
+          }
+        },
+        {
+          "id": "label_ep2",
+          "type": "text",
+          "label": {
+            "en": "Endpoint 2 Label"
+          },
+          "value": "",
+          "hint": {
+            "en": "Custom name for the switch/dimmer on endpoint 2."
+          }
+        },
+        {
+          "id": "label_ep3",
+          "type": "text",
+          "label": {
+            "en": "Endpoint 3 Label"
+          },
+          "value": "",
+          "hint": {
+            "en": "Custom name for the switch/dimmer on endpoint 3."
+          }
+        },
+        {
+          "id": "label_ep4",
+          "type": "text",
+          "label": {
+            "en": "Endpoint 4 Label"
+          },
+          "value": "",
+          "hint": {
+            "en": "Custom name for the switch/dimmer on endpoint 4."
+          }
+        },
+        {
+          "id": "label_ep5",
+          "type": "text",
+          "label": {
+            "en": "Endpoint 5 Label"
+          },
+          "value": "",
+          "hint": {
+            "en": "Custom name for the switch/dimmer on endpoint 5."
+          }
+        },
+        {
+          "id": "label_ep6",
+          "type": "text",
+          "label": {
+            "en": "Endpoint 6 Label"
+          },
+          "value": "",
+          "hint": {
+            "en": "Custom name for the switch/dimmer on endpoint 6."
+          }
+        }
+      ],
+      "platforms": [
+        "local"
+      ],
+      "zwave": {
+        "learnmode": {
+          "image": "/drivers/wallwand/assets/icon.svg",
+          "instruction": {
+            "en": "Put the WallWand into inclusion mode (triple-tap or per manual) and keep it within ~2m of Homey."
+          }
+        },
+        "manufacturerId": [
+          0
+        ],
+        "productTypeId": [
+          3
+        ],
+        "productId": [
+          12
+        ],
+        "deviceClassGeneric": [
+          16
+        ],
+        "commandClasses": [
+          38
+        ]
+      },
+      "connectivity": [
+        "zwave"
+      ],
+      "flow": {
+        "triggers": [
+          {
+            "id": "endpoint_turned_on",
+            "title": {
+              "en": "Endpoint turned on"
+            },
+            "hint": {
+              "en": "Triggered when a specific endpoint is turned on"
+            },
+            "args": [
+              {
+                "type": "autocomplete",
+                "name": "endpoint",
+                "title": {
+                  "en": "Endpoint"
+                },
+                "placeholder": {
+                  "en": "Select endpoint"
+                }
+              }
+            ],
+            "tokens": [
+              {
+                "name": "endpoint_id",
+                "type": "number",
+                "title": {
+                  "en": "Endpoint ID"
+                },
+                "example": 1
+              },
+              {
+                "name": "endpoint_label",
+                "type": "string",
+                "title": {
+                  "en": "Endpoint Label"
+                },
+                "example": "Living Room Light"
+              }
+            ]
+          },
+          {
+            "id": "endpoint_turned_off",
+            "title": {
+              "en": "Endpoint turned off"
+            },
+            "hint": {
+              "en": "Triggered when a specific endpoint is turned off"
+            },
+            "args": [
+              {
+                "type": "autocomplete",
+                "name": "endpoint",
+                "title": {
+                  "en": "Endpoint"
+                },
+                "placeholder": {
+                  "en": "Select endpoint"
+                }
+              }
+            ],
+            "tokens": [
+              {
+                "name": "endpoint_id",
+                "type": "number",
+                "title": {
+                  "en": "Endpoint ID"
+                },
+                "example": 1
+              },
+              {
+                "name": "endpoint_label",
+                "type": "string",
+                "title": {
+                  "en": "Endpoint Label"
+                },
+                "example": "Living Room Light"
+              }
+            ]
+          },
+          {
+            "id": "endpoint_dim_changed",
+            "title": {
+              "en": "Endpoint dimmer changed"
+            },
+            "hint": {
+              "en": "Triggered when a dimmer endpoint's brightness changes"
+            },
+            "args": [
+              {
+                "type": "autocomplete",
+                "name": "endpoint",
+                "title": {
+                  "en": "Endpoint"
+                },
+                "placeholder": {
+                  "en": "Select endpoint"
+                }
+              }
+            ],
+            "tokens": [
+              {
+                "name": "endpoint_id",
+                "type": "number",
+                "title": {
+                  "en": "Endpoint ID"
+                },
+                "example": 1
+              },
+              {
+                "name": "endpoint_label",
+                "type": "string",
+                "title": {
+                  "en": "Endpoint Label"
+                },
+                "example": "Living Room Light"
+              },
+              {
+                "name": "dim_value",
+                "type": "number",
+                "title": {
+                  "en": "Brightness"
+                },
+                "example": 0.5
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

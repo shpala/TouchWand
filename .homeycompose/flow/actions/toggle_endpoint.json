@@ -1,0 +1,29 @@
+{
+  "id": "toggle_endpoint",
+  "title": {
+    "en": "Toggle endpoint"
+  },
+  "titleFormatted": {
+    "en": "Toggle [[endpoint]]"
+  },
+  "hint": {
+    "en": "Toggle a specific WallWand endpoint between ON and OFF."
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=wallwand"
+    },
+    {
+      "name": "endpoint",
+      "type": "autocomplete",
+      "title": {
+        "en": "Endpoint"
+      },
+      "placeholder": {
+        "en": "Select endpoint"
+      }
+    }
+  ]
+}

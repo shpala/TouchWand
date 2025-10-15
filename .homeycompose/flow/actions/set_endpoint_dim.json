@@ -1,0 +1,42 @@
+{
+  "id": "set_endpoint_dim",
+  "title": {
+    "en": "Set endpoint brightness"
+  },
+  "titleFormatted": {
+    "en": "Set [[endpoint]] brightness to [[level]]"
+  },
+  "hint": {
+    "en": "Set the brightness level for a WallWand dimmer endpoint."
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=wallwand"
+    },
+    {
+      "name": "endpoint",
+      "type": "autocomplete",
+      "title": {
+        "en": "Endpoint (Dimmer)"
+      },
+      "placeholder": {
+        "en": "Select dimmer endpoint"
+      }
+    },
+    {
+      "name": "level",
+      "type": "range",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "label": "%",
+      "labelMultiplier": 100,
+      "labelDecimals": 0,
+      "title": {
+        "en": "Brightness"
+      }
+    }
+  ]
+}

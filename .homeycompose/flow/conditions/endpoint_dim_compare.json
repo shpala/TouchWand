@@ -1,0 +1,63 @@
+{
+  "id": "endpoint_dim_compare",
+  "title": {
+    "en": "Dimmer level is..."
+  },
+  "titleFormatted": {
+    "en": "[[endpoint]] brightness is [[comparison]] [[level]]"
+  },
+  "hint": {
+    "en": "Check if a dimmer endpoint's brightness matches a condition."
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=wallwand"
+    },
+    {
+      "name": "endpoint",
+      "type": "autocomplete",
+      "title": {
+        "en": "Endpoint (Dimmer)"
+      }
+    },
+    {
+      "name": "comparison",
+      "type": "dropdown",
+      "title": {
+        "en": "Comparison"
+      },
+      "values": [
+        {
+          "id": "greater_than",
+          "label": {
+            "en": "greater than"
+          }
+        },
+        {
+          "id": "less_than",
+          "label": {
+            "en": "less than"
+          }
+        },
+        {
+          "id": "equal_to",
+          "label": {
+            "en": "equal to"
+          }
+        }
+      ]
+    },
+    {
+      "name": "level",
+      "type": "number",
+      "title": {
+        "en": "Level"
+      },
+      "min": 0,
+      "max": 1,
+      "step": 0.01
+    }
+  ]
+}

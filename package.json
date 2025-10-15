@@ -1,0 +1,10 @@
+{
+  "name": "com.shpala.TouchWand",
+  "version": "0.1.1",
+  "description": "TouchWand devices support",
+  "main": "app.js",
+  "license": "MIT",
+  "dependencies": {
+    "homey-zwavedriver": "^2.2.1"
+  }
+}

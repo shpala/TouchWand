@@ -1,0 +1,29 @@
+{
+  "id": "turn_endpoint_off",
+  "title": {
+    "en": "Turn endpoint OFF"
+  },
+  "titleFormatted": {
+    "en": "Turn [[endpoint]] OFF"
+  },
+  "hint": {
+    "en": "Turn off a specific WallWand endpoint (switch or dimmer)."
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=wallwand"
+    },
+    {
+      "name": "endpoint",
+      "type": "autocomplete",
+      "title": {
+        "en": "Endpoint"
+      },
+      "placeholder": {
+        "en": "Select endpoint"
+      }
+    }
+  ]
+}

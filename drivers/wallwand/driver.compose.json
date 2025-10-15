@@ -1,0 +1,314 @@
+{
+  "id": "wallwand",
+  "name": {
+    "en": "WallWand"
+  },
+  "class": "other",
+  "images": {
+    "xlarge": "drivers/wallwand/assets/icon_xlarge.png",
+    "large": "drivers/wallwand/assets/icon_large.png",
+    "small": "drivers/wallwand/assets/icon_small.png"
+  },
+  "capabilities": [
+    "onoff.ep1",
+    "dim.ep1",
+    "onoff.ep2",
+    "dim.ep2",
+    "onoff.ep3",
+    "dim.ep3",
+    "onoff.ep4",
+    "dim.ep4",
+    "onoff.ep5",
+    "dim.ep5",
+    "onoff.ep6",
+    "dim.ep6"
+  ],
+  "capabilitiesOptions": {
+    "onoff.ep1": {
+      "title": {
+        "en": "Switch 1"
+      }
+    },
+    "dim.ep1": {
+      "title": {
+        "en": "Dimmer 1"
+      }
+    },
+    "onoff.ep2": {
+      "title": {
+        "en": "Switch 2"
+      }
+    },
+    "dim.ep2": {
+      "title": {
+        "en": "Dimmer 2"
+      }
+    },
+    "onoff.ep3": {
+      "title": {
+        "en": "Switch 3"
+      }
+    },
+    "dim.ep3": {
+      "title": {
+        "en": "Dimmer 3"
+      }
+    },
+    "onoff.ep4": {
+      "title": {
+        "en": "Switch 4"
+      }
+    },
+    "dim.ep4": {
+      "title": {
+        "en": "Dimmer 4"
+      }
+    },
+    "onoff.ep5": {
+      "title": {
+        "en": "Switch 5"
+      }
+    },
+    "dim.ep5": {
+      "title": {
+        "en": "Dimmer 5"
+      }
+    },
+    "onoff.ep6": {
+      "title": {
+        "en": "Switch 6"
+      }
+    },
+    "dim.ep6": {
+      "title": {
+        "en": "Dimmer 6"
+      }
+    }
+  },
+  "settings": [
+    {
+      "id": "label_ep1",
+      "type": "text",
+      "label": {
+        "en": "Endpoint 1 Label"
+      },
+      "value": "",
+      "hint": {
+        "en": "Custom name for the switch/dimmer on endpoint 1."
+      }
+    },
+    {
+      "id": "label_ep2",
+      "type": "text",
+      "label": {
+        "en": "Endpoint 2 Label"
+      },
+      "value": "",
+      "hint": {
+        "en": "Custom name for the switch/dimmer on endpoint 2."
+      }
+    },
+    {
+      "id": "label_ep3",
+      "type": "text",
+      "label": {
+        "en": "Endpoint 3 Label"
+      },
+      "value": "",
+      "hint": {
+        "en": "Custom name for the switch/dimmer on endpoint 3."
+      }
+    },
+    {
+      "id": "label_ep4",
+      "type": "text",
+      "label": {
+        "en": "Endpoint 4 Label"
+      },
+      "value": "",
+      "hint": {
+        "en": "Custom name for the switch/dimmer on endpoint 4."
+      }
+    },
+    {
+      "id": "label_ep5",
+      "type": "text",
+      "label": {
+        "en": "Endpoint 5 Label"
+      },
+      "value": "",
+      "hint": {
+        "en": "Custom name for the switch/dimmer on endpoint 5."
+      }
+    },
+    {
+      "id": "label_ep6",
+      "type": "text",
+      "label": {
+        "en": "Endpoint 6 Label"
+      },
+      "value": "",
+      "hint": {
+        "en": "Custom name for the switch/dimmer on endpoint 6."
+      }
+    }
+  ],
+  "platforms": [
+    "local"
+  ],
+  "zwave": {
+    "learnmode": {
+      "image": "/drivers/wallwand/assets/icon.svg",
+      "instruction": {
+        "en": "Put the WallWand into inclusion mode (triple-tap or per manual) and keep it within ~2m of Homey."
+      }
+    },
+    "manufacturerId": [
+      0
+    ],
+    "productTypeId": [
+      3
+    ],
+    "productId": [
+      12
+    ],
+    "deviceClassGeneric": [
+      16
+    ],
+    "commandClasses": [
+      38
+    ]
+  },
+  "connectivity": [
+    "zwave"
+  ],
+  "flow": {
+    "triggers": [
+      {
+        "id": "endpoint_turned_on",
+        "title": {
+          "en": "Endpoint turned on"
+        },
+        "hint": {
+          "en": "Triggered when a specific endpoint is turned on"
+        },
+        "args": [
+          {
+            "type": "autocomplete",
+            "name": "endpoint",
+            "title": {
+              "en": "Endpoint"
+            },
+            "placeholder": {
+              "en": "Select endpoint"
+            }
+          }
+        ],
+        "tokens": [
+          {
+            "name": "endpoint_id",
+            "type": "number",
+            "title": {
+              "en": "Endpoint ID"
+            },
+            "example": 1
+          },
+          {
+            "name": "endpoint_label",
+            "type": "string",
+            "title": {
+              "en": "Endpoint Label"
+            },
+            "example": "Living Room Light"
+          }
+        ]
+      },
+      {
+        "id": "endpoint_turned_off",
+        "title": {
+          "en": "Endpoint turned off"
+        },
+        "hint": {
+          "en": "Triggered when a specific endpoint is turned off"
+        },
+        "args": [
+          {
+            "type": "autocomplete",
+            "name": "endpoint",
+            "title": {
+              "en": "Endpoint"
+            },
+            "placeholder": {
+              "en": "Select endpoint"
+            }
+          }
+        ],
+        "tokens": [
+          {
+            "name": "endpoint_id",
+            "type": "number",
+            "title": {
+              "en": "Endpoint ID"
+            },
+            "example": 1
+          },
+          {
+            "name": "endpoint_label",
+            "type": "string",
+            "title": {
+              "en": "Endpoint Label"
+            },
+            "example": "Living Room Light"
+          }
+        ]
+      },
+      {
+        "id": "endpoint_dim_changed",
+        "title": {
+          "en": "Endpoint dimmer changed"
+        },
+        "hint": {
+          "en": "Triggered when a dimmer endpoint's brightness changes"
+        },
+        "args": [
+          {
+            "type": "autocomplete",
+            "name": "endpoint",
+            "title": {
+              "en": "Endpoint"
+            },
+            "placeholder": {
+              "en": "Select endpoint"
+            }
+          }
+        ],
+        "tokens": [
+          {
+            "name": "endpoint_id",
+            "type": "number",
+            "title": {
+              "en": "Endpoint ID"
+            },
+            "example": 1
+          },
+          {
+            "name": "endpoint_label",
+            "type": "string",
+            "title": {
+              "en": "Endpoint Label"
+            },
+            "example": "Living Room Light"
+          },
+          {
+            "name": "dim_value",
+            "type": "number",
+            "title": {
+              "en": "Brightness"
+            },
+            "example": 0.5
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,10 +1,10 @@
 {
   "id": "turn_endpoint_off",
   "title": {
-    "en": "Turn endpoint OFF"
+    "en": "Turn endpoint off"
   },
   "titleFormatted": {
-    "en": "Turn [[endpoint]] OFF"
+    "en": "Turn [[endpoint]] off"
   },
   "hint": {
     "en": "Turn off a specific WallWand endpoint (switch or dimmer)."

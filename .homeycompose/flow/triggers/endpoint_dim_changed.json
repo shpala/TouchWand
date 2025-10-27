@@ -3,6 +3,9 @@
   "title": {
     "en": "Endpoint dimmer changed"
   },
+  "titleFormatted": {
+    "en": "[[endpoint]] dimmer changed"
+  },
   "hint": {
     "en": "Triggered when a dimmer endpoint's brightness changes"
   },

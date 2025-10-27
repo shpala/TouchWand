@@ -31,6 +31,9 @@
         "title": {
           "en": "Endpoint dimmer changed"
         },
+        "titleFormatted": {
+          "en": "[[endpoint]] dimmer changed"
+        },
         "hint": {
           "en": "Triggered when a dimmer endpoint's brightness changes"
         },
@@ -130,6 +133,9 @@
         "title": {
           "en": "Endpoint turned off"
         },
+        "titleFormatted": {
+          "en": "[[endpoint]] turned off"
+        },
         "hint": {
           "en": "Triggered when a specific endpoint is turned off"
         },
@@ -168,6 +174,9 @@
         "id": "endpoint_turned_on",
         "title": {
           "en": "Endpoint turned on"
+        },
+        "titleFormatted": {
+          "en": "[[endpoint]] turned on"
         },
         "hint": {
           "en": "Triggered when a specific endpoint is turned on"
@@ -370,10 +379,10 @@
       {
         "id": "turn_endpoint_off",
         "title": {
-          "en": "Turn endpoint OFF"
+          "en": "Turn endpoint off"
         },
         "titleFormatted": {
-          "en": "Turn [[endpoint]] OFF"
+          "en": "Turn [[endpoint]] off"
         },
         "hint": {
           "en": "Turn off a specific WallWand endpoint (switch or dimmer)."
@@ -399,10 +408,10 @@
       {
         "id": "turn_endpoint_on",
         "title": {
-          "en": "Turn endpoint ON"
+          "en": "Turn endpoint on"
         },
         "titleFormatted": {
-          "en": "Turn [[endpoint]] ON"
+          "en": "Turn [[endpoint]] on"
         },
         "hint": {
           "en": "Turn on a specific WallWand endpoint (switch or dimmer)."
@@ -619,6 +628,9 @@
             "title": {
               "en": "Endpoint turned on"
             },
+            "titleFormatted": {
+              "en": "[[endpoint]] turned on"
+            },
             "hint": {
               "en": "Triggered when a specific endpoint is turned on"
             },
@@ -658,6 +670,9 @@
             "title": {
               "en": "Endpoint turned off"
             },
+            "titleFormatted": {
+              "en": "[[endpoint]] turned off"
+            },
             "hint": {
               "en": "Triggered when a specific endpoint is turned off"
             },
@@ -696,6 +711,9 @@
             "id": "endpoint_dim_changed",
             "title": {
               "en": "Endpoint dimmer changed"
+            },
+            "titleFormatted": {
+              "en": "[[endpoint]] dimmer changed"
             },
             "hint": {
               "en": "Triggered when a dimmer endpoint's brightness changes"

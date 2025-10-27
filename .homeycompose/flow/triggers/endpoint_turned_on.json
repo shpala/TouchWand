@@ -3,6 +3,9 @@
   "title": {
     "en": "Endpoint turned on"
   },
+  "titleFormatted": {
+    "en": "[[endpoint]] turned on"
+  },
   "hint": {
     "en": "Triggered when a specific endpoint is turned on"
   },

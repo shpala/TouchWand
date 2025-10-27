@@ -1,2 +1,3 @@
-TouchWand WallWand device support.
-Control up to 6 relays (Dimmers or switches).
+This app adds support for the TouchWand WallWand Z-Wave smart panel to your Homey smart home system. The WallWand is a versatile Z-Wave controller that can manage up to 6 independent endpoints, each functioning as either a dimmer or an on/off switch.
+
+With this app, you can easily integrate your WallWand device into Homey, giving you full control over your connected lights and devices. The app automatically discovers all available endpoints and keeps their status synchronized in real-time, even when controlled directly from the physical panel. You can customize each endpoint with a friendly name and use them in your Homey Flows for advanced home automation scenarios.

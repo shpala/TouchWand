@@ -9,9 +9,9 @@ module.exports = class WallWandDevice extends ZwaveDevice {
 
   // Constants
   static Z_WAVE_MAX_DIM_VALUE = 99;
-  static SYNC_DEBOUNCE_MS = 100;
+  static SYNC_DEBOUNCE_MS = 200;
   static HEALTH_CHECK_INTERVAL_MS = 300000; // 5 minutes
-  static COMMAND_DELAY_MS = 150; // Delay between commands to prevent overwhelming device
+  static COMMAND_DELAY_MS = 250; // Delay between commands to prevent overwhelming device
 
   async onInit() {
     super.onInit();
@@ -60,7 +60,7 @@ module.exports = class WallWandDevice extends ZwaveDevice {
 
       this.log('onNodeInit finished successfully.');
     } catch (error) {
-      this.error('[onNodeInit] Initialization failed:', error);
+      this.error('[onNodeInit] Initialization failed:', error.message || error);
       throw error;
     }
   }
@@ -72,7 +72,7 @@ module.exports = class WallWandDevice extends ZwaveDevice {
       try {
         await this._applyLabelsFromSettings(newSettings);
       } catch (error) {
-        this.error('[onSettings] Failed to apply label changes:', error);
+        this.error('[onSettings] Failed to apply label changes:', error.message || error);
         throw error;
       }
     }
@@ -81,6 +81,8 @@ module.exports = class WallWandDevice extends ZwaveDevice {
   }
 
   async onDeleted() {
+    this._commandQueue = [];
+    this._isProcessingQueue = false;
     this._cleanupListeners();
 
     if (this._healthCheckInterval) {
@@ -132,7 +134,7 @@ module.exports = class WallWandDevice extends ZwaveDevice {
         await this.triggerCapabilityListener(command.capabilityId, command.value);
         command.resolve();
       } catch (error) {
-        this.error(`[QUEUE] Failed to execute command: ${command.capabilityId}`, error);
+        this.error(`[QUEUE] Failed to execute command: ${command.capabilityId} - ${error.message || error}`);
         command.reject(error);
       }
 
@@ -162,7 +164,7 @@ module.exports = class WallWandDevice extends ZwaveDevice {
         try {
           cc.removeListener(event, listener);
         } catch (error) {
-          this.error('[CLEANUP] Failed to remove listener:', error);
+          this.error('[CLEANUP] Failed to remove listener:', error.message || error);
         }
       });
       this._listeners = [];
@@ -197,7 +199,7 @@ module.exports = class WallWandDevice extends ZwaveDevice {
         await this._discoverAllEndpoints(this.node);
         await this.setStoreValue('endpointTypes', this._endpointTypes);
       } catch (error) {
-        this.error('[HEALTH] Rediscovery failed:', error);
+        this.error('[HEALTH] Rediscovery failed:', error.message || error);
       }
     }
   }
@@ -357,8 +359,16 @@ module.exports = class WallWandDevice extends ZwaveDevice {
 
     // If already discovered, just ensure capabilities are registered
     if (this._endpointTypes[endpointNum]) {
-      this.log(`[ENDPOINT ${endpointNum}] Already known as ${deviceType}, re-registering capabilities`);
-      await this._registerEndpointCapabilities(endpointNum, deviceType);
+      this.log(`[ENDPOINT ${endpointNum}] Already known as ${deviceType}, ensuring capabilities are registered`);
+      try {
+        await this._registerEndpointCapabilities(endpointNum, deviceType);
+      } catch (error) {
+        // Silently handle registration errors - they're common during discovery
+        const errorMsg = error.message || error.toString();
+        if (!errorMsg.includes('timeout') && !errorMsg.includes('capability get command failed')) {
+          this.log(`[ENDPOINT ${endpointNum}] Capability registration note: ${errorMsg}`);
+        }
+      }
       return;
     }
 
@@ -370,8 +380,18 @@ module.exports = class WallWandDevice extends ZwaveDevice {
 
       // Persist immediately after discovery
       await this.setStoreValue('endpointTypes', this._endpointTypes);
+      this.log(`[CAPABILITY] EP${endpointNum} capabilities registered as ${deviceType}`);
     } catch (error) {
-      this.error(`[ENDPOINT ${endpointNum}] Failed to register:`, error);
+      // Silently handle expected timeout errors during discovery
+      const errorMsg = error.message || error.toString();
+      if (errorMsg.includes('timeout') || errorMsg.includes('capability get command failed')) {
+        // Still mark the endpoint type so it's not lost
+        this._endpointTypes[endpointNum] = deviceType;
+        await this.setStoreValue('endpointTypes', this._endpointTypes);
+        this.log(`[ENDPOINT ${endpointNum}] Registered as ${deviceType} (initial state will sync later)`);
+      } else {
+        this.error(`[ENDPOINT ${endpointNum}] Registration failed: ${errorMsg}`);
+      }
     }
   }
 
@@ -394,10 +414,54 @@ module.exports = class WallWandDevice extends ZwaveDevice {
     const dimCap = `dim.ep${endpointNum}`;
 
     if (deviceType === WallWandDevice.DEVICE_TYPES.DIMMER) {
-      this.registerCapability(onoffCap, 'SWITCH_MULTILEVEL', { multiChannelNodeId: endpointNum });
-      this.registerCapability(dimCap, 'SWITCH_MULTILEVEL', { multiChannelNodeId: endpointNum });
+      // First, ensure capabilities exist on the device
+      await this._ensureCapability(onoffCap);
+      await this._ensureCapability(dimCap);
+
+      // Small delay to ensure Homey has fully registered the capabilities
+      await this._delay(50);
+
+      // Then register Z-Wave handlers
+      try {
+        this.registerCapability(onoffCap, 'SWITCH_MULTILEVEL', { multiChannelNodeId: endpointNum });
+      } catch (error) {
+        const errorMsg = error.message || error.toString();
+        // Log timeouts and communication errors as info, not errors
+        if (errorMsg.includes('timeout') || errorMsg.includes('did not respond') || errorMsg.includes('NO_ACK')) {
+          this.log(`[CAPABILITY] ${onoffCap} handler registered (device communication pending)`);
+        } else {
+          throw new Error(`Failed to register ${onoffCap}: ${errorMsg}`);
+        }
+      }
+
+      try {
+        this.registerCapability(dimCap, 'SWITCH_MULTILEVEL', { multiChannelNodeId: endpointNum });
+      } catch (error) {
+        const errorMsg = error.message || error.toString();
+        if (errorMsg.includes('timeout') || errorMsg.includes('did not respond') || errorMsg.includes('NO_ACK')) {
+          this.log(`[CAPABILITY] ${dimCap} handler registered (device communication pending)`);
+        } else {
+          throw new Error(`Failed to register ${dimCap}: ${errorMsg}`);
+        }
+      }
     } else if (deviceType === WallWandDevice.DEVICE_TYPES.SWITCH) {
-      this.registerCapability(onoffCap, 'SWITCH_BINARY', { multiChannelNodeId: endpointNum });
+      // First, ensure capability exists on the device
+      await this._ensureCapability(onoffCap);
+
+      // Small delay to ensure Homey has fully registered the capability
+      await this._delay(50);
+
+      // Then register Z-Wave handler
+      try {
+        this.registerCapability(onoffCap, 'SWITCH_BINARY', { multiChannelNodeId: endpointNum });
+      } catch (error) {
+        const errorMsg = error.message || error.toString();
+        if (errorMsg.includes('timeout') || errorMsg.includes('did not respond') || errorMsg.includes('NO_ACK')) {
+          this.log(`[CAPABILITY] ${onoffCap} handler registered (device communication pending)`);
+        } else {
+          throw new Error(`Failed to register ${onoffCap}: ${errorMsg}`);
+        }
+      }
     }
   }
 
@@ -470,7 +534,17 @@ module.exports = class WallWandDevice extends ZwaveDevice {
         throw new Error('Invalid or missing report during sync');
       }
     } catch (error) {
-      this.error(`[SYNC] EP${endpointNum} failed:`, error.message);
+      const errorMsg = error.message || error.toString();
+
+      // Distinguish between timeout (common, usually recovers) and other errors
+      if (errorMsg.includes('timeout')) {
+        this.log(`[SYNC] EP${endpointNum} timeout - device may be busy or out of range, will retry on next update`);
+        // Don't mark as unsupported for timeouts - they often resolve themselves
+        return;
+      }
+
+      // For other errors, mark as unsupported
+      this.log(`[SYNC] EP${endpointNum} sync failed: ${errorMsg}`);
       this.log(`[SYNC] Marking EP${endpointNum} as unsupported and removing capabilities`);
       this._endpointTypes[endpointNum] = null;
       await this._removeEndpointCapabilities(endpointNum);
@@ -586,7 +660,7 @@ module.exports = class WallWandDevice extends ZwaveDevice {
         await this._setTitle(dimCap, finalLabel);
       }
     } catch (error) {
-      this.error(`[LABEL] Failed to set label for EP${endpointNum}:`, error);
+      this.error(`[LABEL] Failed to set label for EP${endpointNum}:`, error.message || error);
     }
   }
 
@@ -633,23 +707,32 @@ module.exports = class WallWandDevice extends ZwaveDevice {
 
   async _ensureCapability(cap) {
     if (!this.hasCapability(cap)) {
-      await this.addCapability(cap).catch(err => {
-        this.error(`[CAPABILITY] Failed to add ${cap}:`, err);
-      });
+      try {
+        await this.addCapability(cap);
+        this.log(`[CAPABILITY] Added ${cap}`);
+      } catch (err) {
+        const errorMsg = err.message || err.toString();
+        // Only log if it's not a "capability already exists" type error
+        if (!errorMsg.includes('already exists') && !errorMsg.includes('duplicate')) {
+          this.log(`[CAPABILITY] Note adding ${cap}: ${errorMsg}`);
+        }
+      }
     }
   }
 
   async _removeIfPresent(cap) {
     if (this.hasCapability(cap)) {
       await this.removeCapability(cap).catch(err => {
-        this.error(`[CAPABILITY] Failed to remove ${cap}:`, err);
+        const errorMsg = err.message || err.toString();
+        this.log(`[CAPABILITY] Note removing ${cap}: ${errorMsg}`);
       });
     }
   }
 
   async _setTitle(cap, title) {
     return this.setCapabilityOptions(cap, { title }).catch(err => {
-      this.error(`[CAPABILITY] Failed to set title for ${cap}:`, err);
+      const errorMsg = err.message || err.toString();
+      this.log(`[CAPABILITY] Note setting title for ${cap}: ${errorMsg}`);
     });
   }
 
@@ -680,7 +763,7 @@ module.exports = class WallWandDevice extends ZwaveDevice {
 
       this.log(`[FLOW] Triggered '${triggerId}' for EP${endpointNum}`);
     } catch (error) {
-      this.error(`[FLOW] Failed to trigger '${triggerId}' for EP${endpointNum}:`, error);
+      this.error(`[FLOW] Failed to trigger '${triggerId}' for EP${endpointNum}:`, error.message || error);
     }
   }
 
@@ -706,13 +789,20 @@ module.exports = class WallWandDevice extends ZwaveDevice {
       return;
     }
 
-    if (!this.hasCapability(cap)) return;
+    if (!this.hasCapability(cap)) {
+      // Silently ignore if capability doesn't exist yet (race condition during discovery)
+      return;
+    }
 
     const oldValue = this.getCapabilityValue(cap);
     const newValue = !!value;
 
     this.setCapabilityValue(cap, newValue).catch(err => {
-      this.error(`[ONOFF] Failed to set ${cap} to ${newValue}:`, err);
+      const errorMsg = err.message || err.toString();
+      // Only log non-race-condition errors
+      if (!errorMsg.includes('Invalid Capability')) {
+        this.error(`[ONOFF] Failed to set ${cap} to ${newValue}: ${errorMsg}`);
+      }
     });
 
     if (oldValue === newValue) return;
@@ -739,12 +829,19 @@ module.exports = class WallWandDevice extends ZwaveDevice {
 
     const normalizedValue = Math.max(0, Math.min(1, Number(value01) || 0));
 
-    if (!this.hasCapability(cap)) return;
+    if (!this.hasCapability(cap)) {
+      // Silently ignore if capability doesn't exist yet (race condition during discovery)
+      return;
+    }
 
     const oldValue = this.getCapabilityValue(cap);
 
     this.setCapabilityValue(cap, normalizedValue).catch(err => {
-      this.error(`[DIM] Failed to set ${cap} to ${normalizedValue}:`, err);
+      const errorMsg = err.message || err.toString();
+      // Only log non-race-condition errors
+      if (!errorMsg.includes('Invalid Capability')) {
+        this.error(`[DIM] Failed to set ${cap} to ${normalizedValue}: ${errorMsg}`);
+      }
     });
 
     if (oldValue === normalizedValue) return;

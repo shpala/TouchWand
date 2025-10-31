@@ -283,7 +283,11 @@ module.exports = class WallWandDevice extends ZwaveDevice {
 
         this._syncTimeout = setTimeout(async () => {
           this.log('[REPORT] Root multilevel detected, no endpoint report received, syncing all dimmers');
-          await this._syncEndpointsByType(WallWandDevice.DEVICE_TYPES.DIMMER);
+          try {
+            await this._syncEndpointsByType(WallWandDevice.DEVICE_TYPES.DIMMER);
+          } catch (error) {
+            this.error('[REPORT] Failed to sync dimmer endpoints after root multilevel report', error);
+          }
         }, WallWandDevice.SYNC_DEBOUNCE_MS);
       };
 
@@ -303,7 +307,11 @@ module.exports = class WallWandDevice extends ZwaveDevice {
 
         this._syncTimeout = setTimeout(async () => {
           this.log('[REPORT] Root binary detected, no endpoint report received, syncing all switches');
-          await this._syncEndpointsByType(WallWandDevice.DEVICE_TYPES.SWITCH);
+          try {
+            await this._syncEndpointsByType(WallWandDevice.DEVICE_TYPES.SWITCH);
+          } catch (error) {
+            this.error('[REPORT] Failed to sync switch endpoints after root binary report', error);
+          }
         }, WallWandDevice.SYNC_DEBOUNCE_MS);
       };
 
